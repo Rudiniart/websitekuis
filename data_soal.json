@@ -1,0 +1,23 @@
+nsa[
+    {
+      "soal": "What does HTML stand for?",
+      "pilihan": [
+        "Hyper Text Preprocessor",
+        "Hyper Text Markup Language",
+        "Hyper Text Multiple Language",
+        "Hyper Tool Multi Language"
+      ],
+      "jawaban": "Hyper Text Markup Language"
+    },
+    {
+      "soal": "CSS digunakan untuk ...",
+      "pilihan": [
+        "Menata tampilan halaman web",
+        "Mengolah database",
+        "Menangani request server",
+        "Membuat algoritma"
+      ],
+      "jawaban": "Menata tampilan halaman web"
+    }
+  ]
+  
