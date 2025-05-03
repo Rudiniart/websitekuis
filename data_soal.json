@@ -18,6 +18,15 @@ nsa[
         "Membuat algoritma"
       ],
       "jawaban": "Menata tampilan halaman web"
-    }
+    },
+    {
+    "soal": "Fungsi dari tag <form> dalam HTML adalah untuk ...",
+      "pilihan": [
+        "menampilkan gambar",
+        "Mengelompokkan teks",
+        "Membuat daftar",
+        "Mengirim data ke server"
+      ] 
+    },
   ]
   
