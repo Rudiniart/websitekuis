@@ -28,15 +28,15 @@ function mulaiTimer() {
 
 function tampilkanSoal() {
   const soal = dataSoal[indexSoal];
-  document.getElementById("soal").textContent = soal.soal;
+  document.getElementById("soal").textContent = soal.Soal;
   const pilihanContainer = document.getElementById("pilihan");
   pilihanContainer.innerHTML = "";
 
-  soal.pilihan.forEach(pilihan => {
+  soal.Pilihan.forEach(pilihan => {
     const btn = document.createElement("button");
     btn.className = "btn btn-outline-primary option-btn";
     btn.textContent = pilihan;
-    btn.onclick = () => pilihJawaban(btn, soal.jawaban);
+    btn.onclick = () => pilihJawaban(btn, soal.Jawaban);
     pilihanContainer.appendChild(btn);
   });
 
@@ -65,7 +65,7 @@ function autoLanjut() {
   const semuaTombol = document.querySelectorAll(".option-btn");
   semuaTombol.forEach(btn => {
     btn.classList.add("disabled");
-    if (btn.textContent === dataSoal[indexSoal].jawaban) {
+    if (btn.textContent === dataSoal[indexSoal].Jawaban) {
       btn.classList.add("correct");
     }
   });
