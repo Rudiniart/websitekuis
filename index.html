@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kuis Geografi</title>
+    <style>
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        overflow-x: hidden;
+      }
+
+      /* Video Background Styles */
+      #video-background {
+        position: fixed;
+        right: 0;
+        bottom: 0;
+        min-width: 100%;
+        min-height: 100%;
+        width: auto;
+        height: auto;
+        z-index: -1000;
+        background-size: cover;
+        overflow: hidden;
+      }
+
+      /* Overlay untuk video latar agar konten lebih mudah dibaca */
+      .video-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.4);
+        z-index: -999;
+      }
+
+      .container {
+        background-color: rgba(255, 255, 255, 0.85);
+        border-radius: 15px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        padding: 30px;
+        max-width: 800px;
+        width: 90%;
+        margin: 20px;
+        position: relative;
+        z-index: 10;
+      }
+
+      h1 {
+        color: #3f0000;
+        text-align: center;
+        margin-bottom: 20px;
+        font-size: 2rem;
+      }
+
+      .quiz-container {
+        margin-bottom: 20px;
+      }
+
+      .question {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-bottom: 15px;
+        color: #000000;
+      }
+
+      .options {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 10px;
+        margin-bottom: 25px;
+      }
+
+      .option {
+        background: url("asset/answer\ abu.png") no-repeat center center;
+        background-size: contain;
+        color: rgb(0, 0, 0);
+        border: none;
+        border-radius: 8px;
+        padding: 15px;
+        cursor: pointer;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        text-align: center;
+        font-weight: bold;
+        height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .option:hover {
+        transform: translateY(-2px);
+        filter: brightness(1.1);
+      }
+
+      .option.correct {
+        background: url("asset/answer\ hijau.png") no-repeat center center;
+        background-size: contain;
+      }
+
+      .option.incorrect {
+        background: url("asset/answer\ merah.png") no-repeat center center;
+        background-size: contain;
+      }
+
+      .option.disabled {
+        cursor: not-allowed;
+        opacity: 0.7;
+      }
+
+      .result {
+        text-align: center;
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #0e9000;
+        margin: 20px 0;
+      }
+
+      .score {
+        font-size: 1.5rem;
+        color: #000000;
+        margin: 10px 0;
+      }
+
+      .navigation {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 20px;
+      }
+
+      .nav-button-prev {
+        background: url("asset/BACK.png") no-repeat center center;
+        background-size: contain;
+        color: white;
+        border: none;
+        width: 180px;
+        height: 60px;
+        cursor: pointer;
+        font-size: 1rem;
+        font-weight: bold;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .nav-button-next {
+        background: url("asset/NEXT.png") no-repeat center center;
+        background-size: contain;
+        color: white;
+        border: none;
+        width: 180px;
+        height: 60px;
+        cursor: pointer;
+        font-size: 1rem;
+        font-weight: bold;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .nav-button-prev:hover,
+      .nav-button-next:hover {
+        transform: translateY(-2px);
+        filter: brightness(1.1);
+      }
+
+      .nav-button-prev:disabled,
+      .nav-button-next:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        transform: none;
+        filter: grayscale(100%);
+      }
+
+      .progress-bar {
+        height: 10px;
+        background-color: #ecf0f1;
+        border-radius: 5px;
+        margin-bottom: 20px;
+        overflow: hidden;
+      }
+
+      .progress {
+        height: 100%;
+        background-color: #e1dd00;
+        transition: width 0.3s ease;
+      }
+
+      .hide {
+        display: none;
+      }
+
+      .feedback {
+        margin-top: 10px;
+        padding: 15px;
+        border-radius: 8px;
+        font-weight: 500;
+      }
+
+      .correct-feedback {
+        background-color: rgba(39, 174, 96, 0.2);
+        color: #27ae60;
+      }
+
+      .incorrect-feedback {
+        background-color: rgba(231, 76, 60, 0.2);
+        color: #e74c3c;
+      }
+
+      .action-button {
+        background: url("asset/tb\ hijau\ kosong.png") no-repeat center center;
+        background-size: contain;
+        color: white;
+        border: none;
+        width: 220px;
+        height: 70px;
+        cursor: pointer;
+        font-size: 1.1rem;
+        font-weight: bold;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+        transition: all 0.3s ease;
+        margin: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .action-button:hover {
+        transform: translateY(-2px);
+        filter: brightness(1.1);
+      }
+
+      .certificate {
+        background-color: #fff;
+        border: 10px solid #f8c471;
+        padding: 40px;
+        max-width: 800px;
+        width: 100%;
+        text-align: center;
+        position: relative;
+        box-shadow: 0 0 25px rgba(0, 0, 0, 0.1);
+      }
+
+      .certificate-title {
+        font-size: 2.5rem;
+        color: #2c3e50;
+        margin-bottom: 20px;
+        font-family: "Times New Roman", serif;
+      }
+
+      .certificate-name {
+        font-size: 2rem;
+        font-weight: bold;
+        margin: 20px 0;
+        color: #2980b9;
+      }
+
+      .certificate-text {
+        font-size: 1.2rem;
+        line-height: 1.5;
+        margin: 20px 0;
+      }
+
+      .certificate-date {
+        margin-top: 30px;
+        font-style: italic;
+      }
+
+      .certificate-logo-left {
+        position: absolute;
+        top: 50px;
+        left: 130px;
+        width: 80px;
+        height: 80px;
+        background: url("asset/Logo\ ULM.png") no-repeat center center;
+        background-size: contain;
+        opacity: 0.8;
+      }
+
+      .certificate-logo-right {
+        position: absolute;
+        top: 50px;
+        right: 130px;
+        width: 80px;
+        height: 80px;
+        background: url("asset/Logo\ Hima-1.PNG") no-repeat center center;
+        background-size: contain;
+        opacity: 0.8;
+      }
+
+      .certificate-signature {
+        margin-top: 40px;
+        font-style: italic;
+        border-top: 1px solid #95a5a6;
+        display: inline-block;
+        padding-top: 10px;
+        width: 200px;
+      }
+
+      .print-button {
+        margin-top: 20px;
+        padding: 10px 20px;
+        background-color: #3498db;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 1rem;
+      }
+
+      .print-button:hover {
+        background-color: #2980b9;
+      }
+
+      .certificate-container {
+        margin-top: 30px;
+      }
+
+      .action-buttons {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+
+      .warning-message {
+        color: #e74c3c;
+        font-weight: bold;
+        margin-top: 10px;
+        text-align: center;
+      }
+
+      .home-button {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        background: url("asset/HOME.png") no-repeat center center;
+        background-size: contain;
+        width: 60px;
+        height: 60px;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        z-index: 100;
+      }
+
+      .home-button:hover {
+        transform: scale(1.1);
+      }
+
+      /* Media query for mobile devices */
+      @media (max-width: 768px) {
+        #video-background {
+          height: 100vh;
+          width: auto;
+        }
+
+        .container {
+          width: 95%;
+          padding: 15px;
+          margin: 10px;
+        }
+
+        .home-button {
+          top: 10px;
+          left: 10px;
+          width: 50px;
+          height: 50px;
+        }
+      }
+
+      /* Print styles to hide video when printing certificate */
+      @media print {
+        #video-background,
+        .video-overlay,
+        .home-button {
+          display: none;
+        }
+
+        body {
+          background: white;
+        }
+
+        .container {
+          box-shadow: none;
+          margin: 0;
+          padding: 0;
+        }
+
+        .print-button,
+        #back-to-results {
+          display: none;
+        }
+      }
+      #video-background {
+        position: fixed;
+        top: -50;
+        left: 0px;
+        min-width: 100%;
+        min-height: 100%;
+        width: 300px;
+        height: auto;
+        z-index: -100;
+        object-fit: cover; /* Tambahkan ini */
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Video Background -->
+    <video autoplay muted loop id="video-background">
+      <source src="asset/bg video kuis.mp4" type="video/mp4" />
+      <!-- Fallback jika video tidak didukung -->
+      Your browser does not support HTML5 video.
+    </video>
+
+    <!-- Overlay untuk membuat konten lebih mudah dibaca -->
+    <div class="video-overlay"></div>
+
+    <button
+      id="home-button"
+      class="home-button"
+      title="Kembali ke Halaman Utama"
+    ></button>
+
+    <div class="container">
+      <h1>Kuis Geografi Dunia</h1>
+
+      <div class="progress-bar">
+        <div class="progress" style="width: 0%"></div>
+      </div>
+
+      <div id="quiz-container" class="quiz-container">
+        <!-- Pertanyaan akan dimuat di sini -->
+      </div>
+
+      <div id="warning-message" class="warning-message hide">
+        Anda harus menjawab pertanyaan ini sebelum melanjutkan!
+      </div>
+
+      <div id="feedback" class="feedback hide"></div>
+      <div class="navigation">
+        <button id="prev-button" class="nav-button-prev" disabled></button>
+        <button id="next-button" class="nav-button-next"></button>
+      </div>
+
+      <div id="result" class="result hide">
+        <h2>Hasil Kuis</h2>
+        <p>Anda telah menyelesaikan kuis geografi!</p>
+        <div id="score" class="score"></div>
+        <div class="action-buttons">
+          <button id="restart-button" class="action-button">Main Lagi</button>
+          <button id="certificate-button" class="action-button">
+            Lihat Sertifikat
+          </button>
+        </div>
+      </div>
+
+      <div id="certificate-container" class="certificate-container hide">
+        <div id="certificate" class="certificate">
+          <!-- Tambahkan logo di sini -->
+          <div class="certificate-logo-left"></div>
+          <div class="certificate-logo-right"></div>
+
+          <h1 class="certificate-title">Sertifikat Penyelesaian</h1>
+          <p class="certificate-text">Dengan bangga diberikan kepada:</p>
+          <h2 class="certificate-name" id="certificate-name">Peserta</h2>
+          <p class="certificate-text">Telah berhasil menyelesaikan</p>
+          <h3>Kuis Geografi Dunia</h3>
+          <p class="certificate-text" id="certificate-score"></p>
+          <p class="certificate-date" id="certificate-date"></p>
+          <div class="certificate-signature">Penyelenggara Kuis</div>
+        </div>
+        <button id="print-certificate" class="print-button">
+          Cetak Sertifikat
+        </button>
+        <button id="back-to-results" class="print-button">
+          Kembali ke Hasil
+        </button>
+      </div>
+    </div>
+
+    <script>
+      const quizData = [
+        {
+          question: "Benua terbesar di dunia adalah...",
+          options: ["Asia", "Afrika", "Eropa", "Australia"],
+          correct: 0,
+          explanation:
+            "Sungai Nil adalah sungai terpanjang di dunia dengan panjang sekitar 6.650 kilometer.",
+          points: 10,
+        },
+        {
+          question: "Negara dengan populasi terbesar di dunia adalah?",
+          options: ["India", "Tiongkok", "Amerika Serikat", "Indonesia"],
+          correct: 0,
+          explanation:
+            "India telah melampaui Tiongkok sebagai negara dengan populasi terbesar di dunia pada tahun 2023.",
+          points: 10,
+        },
+        {
+          question: "Gunung tertinggi di dunia adalah?",
+          options: ["Gunung Everest", "K2", "Kangchenjunga", "Lhotse"],
+          correct: 0,
+          explanation:
+            "Gunung Everest adalah gunung tertinggi di dunia dengan ketinggian 8.848,86 meter di atas permukaan laut.",
+          points: 10,
+        },
+        {
+          question: "Samudra terluas di dunia adalah?",
+          options: [
+            "Samudra Pasifik",
+            "Samudra Atlantik",
+            "Samudra Hindia",
+            "Samudra Arktik",
+          ],
+          correct: 0,
+          explanation:
+            "Samudra Pasifik adalah samudra terluas di dunia, mencakup sekitar sepertiga dari permukaan Bumi.",
+          points: 10,
+        },
+        {
+          question: "Negara terbesar berdasarkan luas wilayah adalah?",
+          options: ["Rusia", "Kanada", "Amerika Serikat", "Tiongkok"],
+          correct: 0,
+          explanation:
+            "Rusia adalah negara terbesar di dunia dengan luas wilayah sekitar 17,1 juta kilometer persegi.",
+          points: 10,
+        },
+        {
+          question: "Di benua manakah negara Indonesia berada?",
+          options: ["Asia", "Australia", "Oseania", "Antara Asia dan Oseania"],
+          correct: 0,
+          explanation:
+            "Indonesia secara geografis terletak di benua Asia, tepatnya di Asia Tenggara.",
+          points: 10,
+        },
+        {
+          question: "Padang pasir terluas di dunia adalah?",
+          options: [
+            "Gurun Sahara",
+            "Gurun Arab",
+            "Gurun Gobi",
+            "Gurun Kalahari",
+          ],
+          correct: 0,
+          explanation:
+            "Gurun Sahara adalah padang pasir terluas di dunia dengan luas sekitar 9,2 juta kilometer persegi.",
+          points: 10,
+        },
+        {
+          question: "Danau terdalam di dunia adalah?",
+          options: [
+            "Danau Baikal",
+            "Danau Tanganyika",
+            "Danau Caspian",
+            "Danau Superior",
+          ],
+          correct: 0,
+          explanation:
+            "Danau Baikal di Rusia adalah danau terdalam di dunia dengan kedalaman maksimum mencapai 1.642 meter.",
+          points: 10,
+        },
+        {
+          question: "Ibukota dari Negara Australia adalah?",
+          options: ["Canberra", "Sydney", "Melbourne", "Perth"],
+          correct: 0,
+          explanation:
+            "Canberra adalah ibukota resmi Australia, bukan Sydney atau Melbourne yang lebih terkenal.",
+          points: 10,
+        },
+        {
+          question: "Pulau terbesar di dunia adalah?",
+          options: ["Greenland", "Pulau Papua", "Borneo", "Madagaskar"],
+          correct: 0,
+          explanation:
+            "Greenland adalah pulau terbesar di dunia dengan luas sekitar 2,16 juta kilometer persegi.",
+          points: 10,
+        },
+      ];
+
+      let currentQuestion = 0;
+      let score = 0;
+      let answered = [];
+      let shuffledQuizData = [];
+      let questionOrder = [];
+
+      const warningMessage = document.getElementById("warning-message");
+      const quizContainer = document.getElementById("quiz-container");
+      const resultContainer = document.getElementById("result");
+      const scoreDisplay = document.getElementById("score");
+      const prevButton = document.getElementById("prev-button");
+      const nextButton = document.getElementById("next-button");
+      const progressBar = document.querySelector(".progress");
+      const feedbackContainer = document.getElementById("feedback");
+      const restartButton = document.getElementById("restart-button");
+      const certificateButton = document.getElementById("certificate-button");
+      const certificateScore = document.getElementById("certificate-score");
+      const certificateDate = document.getElementById("certificate-date");
+      const certificateContainer = document.getElementById(
+        "certificate-container"
+      );
+      const printCertificateButton =
+        document.getElementById("print-certificate");
+      const backToResultsButton = document.getElementById("back-to-results");
+      const homeButton = document.getElementById("home-button");
+      const videoBackground = document.getElementById("video-background");
+
+      // Handling video error
+      videoBackground.addEventListener("error", function (e) {
+        console.error("Video error: ", e);
+        // Fallback to a static background if video fails to load
+        document.body.style.backgroundImage = "url('asset/BG-MATERI.png')";
+        document.body.style.backgroundSize = "cover";
+        document.body.style.backgroundAttachment = "fixed";
+      });
+
+      // Fungsi untuk mengacak array
+      function shuffleArray(array) {
+        let shuffled = [...array];
+        for (let i = shuffled.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+        }
+        return shuffled;
+      }
+
+      // Fungsi untuk mengacak opsi jawaban
+      function shuffleOptions(question) {
+        // Ambil opsi dan jawaban yang benar
+        const options = [...question.options];
+        const correctAnswer = options[question.correct];
+
+        // Acak opsi
+        const shuffledOptions = shuffleArray(options);
+
+        // Temukan indeks jawaban yang benar di array yang sudah diacak
+        const newCorrectIndex = shuffledOptions.indexOf(correctAnswer);
+
+        return {
+          ...question,
+          options: shuffledOptions,
+          correct: newCorrectIndex,
+        };
+      }
+
+      // Fungsi untuk mengacak soal dan jawaban
+      function shuffleQuizData() {
+        // Acak urutan soal
+        questionOrder = Array.from({ length: quizData.length }, (_, i) => i);
+        questionOrder = shuffleArray(questionOrder);
+
+        // Buat soal acak dengan opsi acak
+        shuffledQuizData = questionOrder.map((index) => {
+          return shuffleOptions(quizData[index]);
+        });
+
+        // Reset variabel quiz
+        currentQuestion = 0;
+        score = 0;
+
+        // Reset answered array
+        answered = new Array(shuffledQuizData.length).fill(false);
+      }
+
+      function loadQuestion() {
+        const questionData = shuffledQuizData[currentQuestion];
+
+        let optionsHTML = "";
+        questionData.options.forEach((option, index) => {
+          let optionClass = "option";
+
+          if (answered[currentQuestion]) {
+            optionClass += " disabled";
+            if (index === questionData.correct) {
+              optionClass += " correct";
+            } else if (
+              index === shuffledQuizData[currentQuestion].selected &&
+              index !== questionData.correct
+            ) {
+              optionClass += " incorrect";
+            }
+          }
+
+          optionsHTML += `<button class="${optionClass}" onclick="selectOption(${index})">${option}</button>`;
+        });
+
+        quizContainer.innerHTML = `
+                <div class="question">${currentQuestion + 1}. ${
+          questionData.question
+        }</div>
+                <div class="options">${optionsHTML}</div>
+              `;
+
+        updateProgressBar();
+        updateNavButtons();
+
+        // Show feedback if answered
+        if (answered[currentQuestion]) {
+          showFeedback();
+        } else {
+          hideFeedback();
+        }
+
+        // Hide warning message when loading a new question
+        warningMessage.classList.add("hide");
+      }
+
+      function selectOption(optionIndex) {
+        if (answered[currentQuestion]) {
+          return;
+        }
+
+        shuffledQuizData[currentQuestion].selected = optionIndex;
+        answered[currentQuestion] = true;
+
+        if (optionIndex === shuffledQuizData[currentQuestion].correct) {
+          score += shuffledQuizData[currentQuestion].points;
+          showFeedback(true);
+        } else {
+          showFeedback(false);
+        }
+
+        loadQuestion();
+
+        if (allQuestionsAnswered()) {
+          nextButton.textContent = "";
+        }
+      }
+
+      function showFeedback(isCorrect = null) {
+        const questionData = shuffledQuizData[currentQuestion];
+
+        if (isCorrect === null) {
+          // Just show explanation for previously answered question
+          if (questionData.selected === questionData.correct) {
+            isCorrect = true;
+          } else {
+            isCorrect = false;
+          }
+        }
+
+        feedbackContainer.classList.remove(
+          "hide",
+          "correct-feedback",
+          "incorrect-feedback"
+        );
+
+        if (isCorrect) {
+          feedbackContainer.classList.add("correct-feedback");
+          feedbackContainer.innerHTML = `<p><strong>Benar!</strong> ${questionData.explanation}</p>`;
+        } else {
+          feedbackContainer.classList.add("incorrect-feedback");
+          feedbackContainer.innerHTML = `<p><strong>Kurang tepat.</strong> Jawaban yang benar adalah: ${
+            questionData.options[questionData.correct]
+          }. ${questionData.explanation}</p>`;
+        }
+      }
+
+      function hideFeedback() {
+        feedbackContainer.classList.add("hide");
+      }
+
+      function allQuestionsAnswered() {
+        return answered.every((ans) => ans === true);
+      }
+
+      function showResult() {
+        quizContainer.classList.add("hide");
+        feedbackContainer.classList.add("hide");
+        document.querySelector(".navigation").classList.add("hide");
+        resultContainer.classList.remove("hide");
+        document.querySelector(".progress-bar").classList.add("hide");
+        warningMessage.classList.add("hide");
+
+        const totalPossibleScore = shuffledQuizData.reduce(
+          (total, question) => total + question.points,
+          0
+        );
+        const percentage = Math.round((score / totalPossibleScore) * 100);
+        scoreDisplay.innerHTML = `Skor Anda: ${score} dari ${totalPossibleScore} (${percentage}%)`;
+
+        let message = "";
+        if (percentage >= 90) {
+          message = "Luar biasa! Anda seorang ahli geografi!";
+        } else if (percentage >= 70) {
+          message = "Bagus sekali! Pengetahuan geografi Anda sangat baik.";
+        } else if (percentage >= 50) {
+          message =
+            "Cukup baik. Anda memiliki pengetahuan geografi yang memadai.";
+        } else {
+          message = "Terus belajar dan tingkatkan pengetahuan geografi Anda!";
+        }
+
+        scoreDisplay.innerHTML += `<p>${message}</p>`;
+      }
+
+      function nextQuestion() {
+        // Check if current question is answered
+        if (!answered[currentQuestion]) {
+          warningMessage.classList.remove("hide");
+          return;
+        }
+
+        if (currentQuestion < shuffledQuizData.length - 1) {
+          currentQuestion++;
+          loadQuestion();
+        } else if (allQuestionsAnswered()) {
+          showResult();
+        }
+      }
+
+      function prevQuestion() {
+        if (currentQuestion > 0) {
+          currentQuestion--;
+          loadQuestion();
+        }
+      }
+      function updateNavButtons() {
+        prevButton.disabled = currentQuestion === 0;
+
+        if (
+          allQuestionsAnswered() &&
+          currentQuestion === shuffledQuizData.length - 1
+        ) {
+          nextButton.textContent = "";
+        } else {
+          nextButton.textContent = "";
+        }
+      }
+
+      function updateProgressBar() {
+        const progress =
+          ((currentQuestion + 1) / shuffledQuizData.length) * 100;
+        progressBar.style.width = `${progress}%`;
+      }
+
+      function restartQuiz() {
+        // Acak ulang soal untuk sesi baru
+        shuffleQuizData();
+
+        resultContainer.classList.add("hide");
+        certificateContainer.classList.add("hide");
+        quizContainer.classList.remove("hide");
+        document.querySelector(".navigation").classList.remove("hide");
+        document.querySelector(".progress-bar").classList.remove("hide");
+        loadQuestion();
+      }
+
+      function showCertificate() {
+        resultContainer.classList.add("hide");
+        certificateContainer.classList.remove("hide");
+
+        const totalPossibleScore = shuffledQuizData.reduce(
+          (total, question) => total + question.points,
+          0
+        );
+        const percentage = Math.round((score / totalPossibleScore) * 100);
+
+        // Get user name (you might want to add an input field for this)
+        const userName = prompt(
+          "Masukkan nama Anda untuk sertifikat:",
+          "Peserta"
+        );
+        document.getElementById("certificate-name").textContent =
+          userName || "Peserta";
+
+        // Set score on certificate
+        certificateScore.textContent = `Dengan nilai: ${score} dari ${totalPossibleScore} (${percentage}%)`;
+
+        // Set current date
+        const today = new Date();
+        const options = { year: "numeric", month: "long", day: "numeric" };
+        certificateDate.textContent = today.toLocaleDateString(
+          "id-ID",
+          options
+        );
+      }
+      function printCertificate() {
+        window.print();
+      }
+
+      function backToResults() {
+        certificateContainer.classList.add("hide");
+        resultContainer.classList.remove("hide");
+      }
+
+      function goToHomePage() {
+        // Ganti URL ini dengan URL halaman utama Anda
+        if (
+          confirm(
+            "Anda yakin ingin kembali ke halaman utama? Semua progres kuis akan hilang."
+          )
+        ) {
+          window.location.href = "menu.html";
+        }
+      }
+
+      // Event listeners
+      nextButton.addEventListener("click", function () {
+        if (
+          currentQuestion === shuffledQuizData.length - 1 &&
+          allQuestionsAnswered()
+        ) {
+          showResult();
+        } else {
+          nextQuestion();
+        }
+      });
+
+      prevButton.addEventListener("click", prevQuestion);
+      restartButton.addEventListener("click", restartQuiz);
+      certificateButton.addEventListener("click", showCertificate);
+      printCertificateButton.addEventListener("click", printCertificate);
+      backToResultsButton.addEventListener("click", backToResults);
+      homeButton.addEventListener("click", goToHomePage);
+
+      // Acak soal saat pertama kali memuat kuis
+      shuffleQuizData();
+
+      // Initialize quiz
+      loadQuestion();
+
+      // Set up global functions for option selection
+      window.selectOption = selectOption;
+    </script>
+  </body>
+</html>

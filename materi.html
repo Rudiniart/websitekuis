@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        height: 100vh;
+        background-color: black;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+        position: relative;
+        font-family: Arial, sans-serif;
+      }
+
+      .background {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 100%;
+        background-image: url("asset/BG-MATERI.png");
+        background-size: cover;
+        background-position: center;
+        z-index: -1;
+        opacity: 0;
+        transition: opacity 0.4s ease-in-out;
+      }
+
+      .background.show {
+        opacity: 1;
+      }
+
+      .login-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 90%;
+        max-width: 1200px;
+        opacity: 0;
+        transition: opacity 0.4s ease-in-out;
+      }
+
+      .login-button {
+        border: none;
+        background: transparent;
+        padding: 0;
+        cursor: pointer;
+        transition: transform 0.3s, opacity 0.4s ease-in-out;
+        transform: scale(1);
+        margin-top: 0px;
+        opacity: 0;
+      }
+
+      .login-button.show {
+        opacity: 1;
+      }
+
+      .login-button:hover {
+        transform: scale(1.1);
+      }
+
+      .login-button:focus {
+        outline: none;
+      }
+
+      .login-button img {
+        width: 200px;
+        height: auto;
+      }
+
+      .center-buttons {
+        position: absolute;
+        top: 65%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        display: flex;
+        gap: 20px;
+        z-index: 20;
+        opacity: 0;
+        transition: opacity 0.4s ease-in-out;
+      }
+
+      .center-buttons.show {
+        opacity: 1;
+      }
+
+      .center-buttons img {
+        width: 100px;
+        height: 60px;
+        cursor: pointer;
+        transition: transform 0.3s ease;
+      }
+
+      .center-buttons img:hover {
+        transform: scale(1.1);
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* Card Slider Styles */
+      .card-slider-container {
+        width: 100%;
+        position: relative;
+        margin-bottom: 30px;
+      }
+
+      .card-slider {
+        position: relative;
+        display: flex;
+        width: 100%;
+        height: 70vh;
+        max-height: 600px;
+        overflow: hidden;
+      }
+
+      .card {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        transition: opacity 0.5s ease;
+        opacity: 0;
+      }
+
+      .card.active {
+        opacity: 1;
+      }
+
+      .card img {
+        max-width: 90%;
+        max-height: 90%;
+        object-fit: contain;
+      }
+
+      .slider-nav {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        transform-origin: center;
+        background: transparent;
+        cursor: pointer;
+        border: none;
+        width: 60px;
+        height: 60px;
+        z-index: 10;
+        transition: transform 0.3s ease, opacity 0.3s ease;
+      }
+
+      .slider-nav:hover {
+        transform: translateY(-50%) scale(1.1);
+        opacity: 0.85;
+        filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.3));
+      }
+
+      .slider-nav img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+      }
+
+      .slider-nav-left {
+        left: 150px;
+      }
+
+      .slider-nav-right {
+        right: 150px;
+      }
+
+      .slider-indicators {
+        display: flex;
+        justify-content: center;
+        margin-top: 15px;
+      }
+
+      .indicator {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background-color: rgba(255, 255, 255, 0.3);
+        margin: 0 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
+
+      .indicator.active {
+        background-color: white;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="background" id="bg"></div>
+
+    <div class="center-buttons">
+      <a
+        href="https://www.youtube.com/watch?app=desktop&v=xIJvsAbwGmY"
+        target="_blank"
+      >
+        <img src="asset/tb-mt1.png" alt="Video 1" />
+      </a>
+      <a
+        href="https://youtu.be/8m-TYKxiwwg?si=axFjoVKJ4cyYKfMG"
+        target="_blank"
+      >
+        <img src="asset/tb-mt2.png" alt="Video 2" />
+      </a>
+      <a
+        href="https://www.youtube.com/watch?app=desktop&v=rOU49mTrSqQ"
+        target="_blank"
+        a
+      >
+        <img src="asset/tb-mt3.png" alt="Video 3" />
+      </a>
+    </div>
+    <div class="login-container" id="loginContainer">
+      <div class="card-slider-container">
+        <div class="card-slider" id="cardSlider">
+          <div class="card">
+            <img src="asset/MATERI 1.png" alt="Card 1" />
+          </div>
+          <div class="card">
+            <img src="asset/MATERI 2.png" alt="Card 2" />
+          </div>
+          <div class="card">
+            <img src="asset/MATERI 3.png" alt="Card 3" />
+          </div>
+        </div>
+        <button class="slider-nav slider-nav-left" id="prevBtn">
+          <img src="asset/BACK.png" alt="Previous" />
+        </button>
+        <button class="slider-nav slider-nav-right" id="nextBtn">
+          <img src="asset/NEXT.png" alt="Next" />
+        </button>
+        <div class="slider-indicators" id="indicators"></div>
+      </div>
+      <a href="menu.html" class="login-button" id="btn">
+        <img src="asset/home hijau.png" alt="Login" />
+      </a>
+      <div class="loading-spinner" id="spinner"></div>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const bg = document.getElementById("bg");
+        const loginContainer = document.getElementById("loginContainer");
+        const btn = document.getElementById("btn");
+        const spinner = document.getElementById("spinner");
+        const prevBtn = document.getElementById("prevBtn");
+        const nextBtn = document.getElementById("nextBtn");
+        const indicators = document.getElementById("indicators");
+        const centerButtons = document.querySelector(".center-buttons");
+        const loginButton = document.querySelector(".login-button");
+
+        const cards = document.querySelectorAll(".card");
+        let currentIndex = 0;
+
+        cards.forEach((_, index) => {
+          const indicator = document.createElement("div");
+          indicator.classList.add("indicator");
+          if (index === 0) indicator.classList.add("active");
+          indicator.addEventListener("click", () => goToSlide(index));
+          indicators.appendChild(indicator);
+        });
+
+        cards[0].classList.add("active");
+
+        function updateSlider() {
+          cards.forEach((card) => card.classList.remove("active"));
+          cards[currentIndex].classList.add("active");
+          document.querySelectorAll(".indicator").forEach((ind, index) => {
+            ind.classList.toggle("active", index === currentIndex);
+          });
+        }
+
+        function goToSlide(index) {
+          currentIndex = index;
+          updateSlider();
+        }
+
+        prevBtn.addEventListener("click", () => {
+          currentIndex = (currentIndex - 1 + cards.length) % cards.length;
+          updateSlider();
+        });
+
+        nextBtn.addEventListener("click", () => {
+          currentIndex = (currentIndex + 1) % cards.length;
+          updateSlider();
+        });
+
+        updateSlider();
+
+        const preloadImage = new Image();
+        preloadImage.src = "asset/BG-MATERI.png";
+        preloadImage.onload = () => {
+          setTimeout(() => {
+            bg.classList.add("show");
+            loginContainer.style.opacity = "1";
+            centerButtons.classList.add("show");
+            loginButton.classList.add("show");
+          }, 100);
+        };
+
+        btn.addEventListener("click", function (e) {
+          e.preventDefault();
+          const href = this.getAttribute("href");
+          this.style.display = "none";
+          spinner.style.display = "block";
+
+          // Fade out semua elemen yang show dan background
+          bg.classList.remove("show");
+          centerButtons.classList.remove("show");
+          loginButton.classList.remove("show");
+          loginContainer.style.opacity = "0";
+
+          setTimeout(() => {
+            window.location.href = href;
+          }, 400);
+        });
+      });
+    </script>
+  </body>
+</html>

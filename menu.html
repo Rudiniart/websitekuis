@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Menu Utama</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        padding: 0;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+        position: relative;
+        background-color: black;
+      }
+
+      /* Video background */
+      .background-video {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        z-index: -1;
+        opacity: 0;
+        transition: opacity 0.4s ease-in-out;
+      }
+
+      /* Tombol container */
+      .button-container {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        grid-template-rows: repeat(2, 1fr);
+        gap: 40px;
+        place-items: center;
+        width: 80%;
+        max-width: 800px;
+        margin: auto;
+        z-index: 10; /* pastikan tombol di atas video */
+        opacity: 0;
+        transition: opacity 0.4s ease-in-out;
+      }
+
+      /* Tombol */
+      .login-button {
+        border: none;
+        background: transparent;
+        padding: 0;
+        cursor: pointer;
+        transition: transform 0.3s;
+        transform: scale(1.3);
+        width: 100%;
+        text-align: center;
+      }
+
+      .login-button:hover {
+        transform: scale(1.4);
+      }
+
+      .login-button img {
+        width: 100%;
+        max-width: 250px;
+        height: auto;
+        display: block;
+        margin: 0 auto;
+        transition: opacity 0.4s ease-in-out;
+      }
+
+      /* Kelas untuk fade in */
+      .show {
+        opacity: 1 !important;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Video sebagai background -->
+    <video
+      id="bg-video"
+      class="background-video"
+      autoplay
+      muted
+      loop
+      playsinline
+      preload="auto"
+    >
+      <source src="asset/bg-video.mp4" type="video/mp4" />
+      Your browser does not support the video tag.
+    </video>
+
+    <!-- Tombol tombol -->
+    <div class="button-container" id="buttons">
+      <a href="materi.html" class="login-button">
+        <img src="asset/Materi.png" alt="Materi" />
+      </a>
+      <a href="index.html" class="login-button">
+        <img src="asset/kuis.png" alt="Kuis" />
+      </a>
+      <a href="carabermain.html" class="login-button">
+        <img src="asset/cara bermain.png" alt="Cara Bermain" />
+      </a>
+      <a href="information.html" class="login-button">
+        <img src="asset/tentang game.png" alt="Informasi" />
+      </a>
+    </div>
+
+    <script>
+      window.addEventListener("DOMContentLoaded", () => {
+        const video = document.getElementById("bg-video");
+        const buttons = document.getElementById("buttons");
+
+        setTimeout(() => {
+          video.classList.add("show");
+          buttons.classList.add("show");
+        }, 50);
+      });
+
+      const links = document.querySelectorAll("a");
+      links.forEach((link) => {
+        link.addEventListener("click", function (e) {
+          e.preventDefault();
+          const href = this.getAttribute("href");
+
+          const video = document.getElementById("bg-video");
+          const buttons = document.getElementById("buttons");
+
+          // fade out dulu
+          video.classList.remove("show");
+          buttons.classList.remove("show");
+
+          // tunggu transisi selesai sebelum pindah halaman
+          setTimeout(() => {
+            window.location.href = href;
+          }, 400);
+        });
+      });
+    </script>
+  </body>
+</html>
